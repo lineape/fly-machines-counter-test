@@ -1,0 +1,5 @@
+node_modules
+.yarn/cache
+.idea
+.env
+.env.local
