@@ -16,6 +16,15 @@ resource "fly_app" "api" {
   org  = "personal"
 }
 
+
+resource "fly_volume" "data" {
+  name       = "eli_test_api_data"
+  app        = "eli-test-api"
+  size       = 1
+  region     = "sea"
+  depends_on = [fly_app.api]
+}
+
 resource "fly_ip" "apiIpv4" {
   app        = "eli-test-api"
   type       = "v4"
@@ -36,6 +45,7 @@ resource "fly_machine" "server" {
 
   cpus     = 1
   memorymb = 256
+  mounts   = [{ path = "/data", volume = fly_volume.data.id }]
 
   services = [
     {
@@ -48,13 +58,13 @@ resource "fly_machine" "server" {
     }
   ]
 
-  env = {}
+  env = {
+    SQLITE_DB_FILENAME = "/data/db.sqlite"
+    BLAH = "blahx"
+  }
 
-  depends_on = [fly_app.api]
-}
-
-
-output "ip4" {
-  // noinspection HILUnresolvedReference
-  value = fly_ip.apiIpv4.address
+  depends_on = [
+    fly_volume.data,
+    fly_app.api
+  ]
 }
