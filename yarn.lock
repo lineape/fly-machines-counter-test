@@ -356,6 +356,7 @@ __metadata:
   resolution: "app@workspace:packages/app"
   dependencies:
     "@types/express": ^4.17.14
+    env-cmd: ^10.1.0
     express: ^4.18.1
     typescript: ^4.8.3
   languageName: unknown
@@ -530,6 +531,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^4.0.0":
+  version: 4.1.1
+  resolution: "commander@npm:4.1.1"
+  checksum: d7b9913ff92cae20cb577a4ac6fcc121bd6223319e54a40f51a14740a681ad5c574fd29a57da478a5f234a6fa6c52cbf0b7c641353e03c648b1ae85ba670b977
+  languageName: node
+  linkType: hard
+
 "concat-map@npm:0.0.1":
   version: 0.0.1
   resolution: "concat-map@npm:0.0.1"
@@ -580,7 +588,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.2":
+"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
   dependencies:
@@ -690,6 +698,18 @@ __metadata:
   version: 1.0.2
   resolution: "encodeurl@npm:1.0.2"
   checksum: e50e3d508cdd9c4565ba72d2012e65038e5d71bdc9198cb125beb6237b5b1ade6c0d343998da9e170fb2eae52c1bed37d4d6d98a46ea423a0cddbed5ac3f780c
+  languageName: node
+  linkType: hard
+
+"env-cmd@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "env-cmd@npm:10.1.0"
+  dependencies:
+    commander: ^4.0.0
+    cross-spawn: ^7.0.0
+  bin:
+    env-cmd: bin/env-cmd.js
+  checksum: efef55074250f14cfc0b80c98dd98f1f056a80e1f3c7db14097ceefdd2d56c766bbb83b54c22932112707f41b36ce2e923f8015d69e62a75c12d98640b972e75
   languageName: node
   linkType: hard
 
