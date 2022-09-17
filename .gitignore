@@ -32,4 +32,5 @@ cdk.out
 packages/app/.terraform.lock.hcl
 packages/app/terraform.tfstate
 packages/app/terraform.tfstate.backup
+packages/app/dev.sqlite3
 .terraform
