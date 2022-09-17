@@ -21,6 +21,7 @@ dist
 coverage
 
 .env
+.env.local
 
 # CDK Being Extra
 cdk.out
