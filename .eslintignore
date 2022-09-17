@@ -1,0 +1,4 @@
+packages/app/dist
+*.test.ts
+*.test.tsx
+

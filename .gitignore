@@ -1,0 +1,30 @@
+# junk files
+.DS_Store
+*.log
+
+# node/yarn related
+node_modules
+.yarn/*
+.pnp.*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# IDE related
+.idea
+.vscode
+
+# build artifacts / tmp files
+dist
+coverage
+
+.env
+
+# CDK Being Extra
+cdk.out
+
+# tsbuildinfo
+.tsbuildinfo
+
