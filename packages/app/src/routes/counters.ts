@@ -108,9 +108,13 @@ const incrementCounter = async (
     const counter = await getCounter(trx, name);
     if (!counter) {
       // Create the counter if it doesn't exist.
-      return trx('counters')
+      const [created] = await trx('counters')
         .insert({ name, count: amount })
-        .returning<Counter>(['name', 'count']);
+        .returning<Counter[]>(['name', 'count']);
+
+      if (!created) throw new Error('Failed to create counter');
+
+      return created;
     }
 
     // Update the counter if it does exist.
