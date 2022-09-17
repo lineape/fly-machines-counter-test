@@ -29,3 +29,7 @@ cdk.out
 # tsbuildinfo
 .tsbuildinfo
 
+packages/app/.terraform.lock.hcl
+packages/app/terraform.tfstate
+packages/app/terraform.tfstate.backup
+.terraform
