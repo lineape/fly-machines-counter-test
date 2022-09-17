@@ -6,25 +6,27 @@ export type Counter = {
 };
 
 export class CounterService {
-  constructor(private db: Knex) {}
+  constructor(private db: Knex, private tableName = 'counters') {}
 
   getAll(limit: number, offset = 0): Promise<Counter[]> {
-    return this.db('counters')
+    return this.db(this.tableName)
       .select<Counter[]>(['name', 'count'])
       .limit(limit)
       .offset(offset);
   }
 
-  getByName(name: string): Promise<Counter | undefined> {
-    return getCounter(this.db, name);
+  async getByName(name: string): Promise<Counter> {
+    const counter = await getCounter(this.db, this.tableName, name);
+
+    return counter || { name, count: 0 };
   }
 
   async increment(name: string, amount: number): Promise<Counter> {
     return this.db.transaction(async (trx) => {
-      const counter = await getCounter(trx, name);
+      const counter = await getCounter(trx, this.tableName, name);
       if (!counter) {
         // Create the counter if it doesn't exist.
-        const [created] = await trx('counters')
+        const [created] = await trx(this.tableName)
           .insert({ name, count: amount })
           .returning<Counter[]>(['name', 'count']);
 
@@ -34,7 +36,7 @@ export class CounterService {
       }
 
       // Update the counter if it does exist.
-      const [updated] = await trx('counters')
+      const [updated] = await trx(this.tableName)
         .increment('count', amount)
         .where({ name })
         .returning<Counter[]>(['name', 'count']);
@@ -43,10 +45,18 @@ export class CounterService {
     });
   }
 
-  async migrateIfNeeded(): Promise<void> {
-    if (await this.db.schema.hasTable('counters')) return;
+  resetByName(name: string): Promise<unknown> {
+    return this.db(this.tableName).delete().where({ name });
+  }
 
-    await this.db.schema.createTable('counters', (table) => {
+  resetAll(): Promise<unknown> {
+    return this.db(this.tableName).delete();
+  }
+
+  async migrateIfNeeded(): Promise<void> {
+    if (await this.db.schema.hasTable(this.tableName)) return;
+
+    await this.db.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary();
       table.string('name').notNullable().unique();
       table.integer('count').notNullable();
@@ -54,5 +64,9 @@ export class CounterService {
   }
 }
 
-const getCounter = (db: Knex, name: string): Promise<Counter | undefined> =>
-  db('counters').select<Counter[]>(['name', 'count']).where({ name }).first();
+const getCounter = (
+  db: Knex,
+  tableName: string,
+  name: string,
+): Promise<Counter | undefined> =>
+  db(tableName).select<Counter[]>(['name', 'count']).where({ name }).first();

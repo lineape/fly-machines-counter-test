@@ -1,4 +1,4 @@
-import { type Response,Router } from 'express';
+import { type Response, Router } from 'express';
 
 import type { CounterService } from '../services/CounterService';
 
@@ -22,6 +22,24 @@ export function createCountersRouter(service: CounterService): Router {
 
       const error = e instanceof Error ? e.message : String(e);
       res.status(500).json({ error });
+    }
+  });
+
+  router.get('/reset', async (_, res) => {
+    try {
+      await service.resetAll();
+      res.status(200).send("Reset all counters. You're welcome.");
+    } catch (e) {
+      handleError(res, e);
+    }
+  });
+
+  router.get<ParamName>('/:name/reset', async (req, res) => {
+    try {
+      await service.resetByName(req.params.name);
+      res.status(200).send(`Reset counter ${req.params.name}. You're welcome.`);
+    } catch (e) {
+      handleError(res, e);
     }
   });
 
