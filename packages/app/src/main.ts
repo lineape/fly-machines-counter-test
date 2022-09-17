@@ -1,17 +1,25 @@
 import express from 'express';
-import { createCountersRouter } from './routes/counters';
 import knex, { type Knex } from 'knex';
-import { killProcessMiddleware } from './middleware/kill-process';
-import { siteIndexHandler } from './routes/site-index';
 import morgan from 'morgan';
 
+import { killProcessMiddleware } from './middleware/kill-process';
+import { createCountersRouter } from './routes/counters';
+import { siteIndexHandler } from './routes/site-index';
+import { CounterService } from './services/CounterService';
+
 async function main(): Promise<void> {
+  console.log('Creating database connection...');
+  const db = createDbConnection();
+  const service = new CounterService(db);
+
+  console.log('Ensuring counters table exists...');
+  await service.ensureCounterTableExists();
+
   console.log('Creating server instance...');
   const app = express();
 
-  console.log('Creating database connection...');
-  const db = createDbConnection();
-
+  console.log('Creating middleware...');
+  app.use(morgan('dev'));
   if (process.env.DISABLE_KILL_PROCESS !== 'true') {
     console.log('Adding kill process middleware...');
     app.use(killProcessMiddleware(1000 * 10));
@@ -19,10 +27,8 @@ async function main(): Promise<void> {
     console.log('Kill process middleware disabled.');
   }
 
-  app.use(morgan('dev'));
-
-  console.log('Creating counters router...');
-  app.use('/counters', await createCountersRouter(db));
+  console.log('Creating routes...');
+  app.use('/counters', createCountersRouter(service));
   app.get('/', siteIndexHandler);
 
   console.log('Starting server...');
@@ -33,6 +39,7 @@ async function main(): Promise<void> {
 
 function createDbConnection(): Knex {
   const SQLITE_DB_FILENAME = process.env.SQLITE_DB_FILENAME || './dev.sqlite3';
+
   return knex({
     client: 'better-sqlite3',
     connection: { filename: SQLITE_DB_FILENAME },
