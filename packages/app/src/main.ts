@@ -13,7 +13,7 @@ async function main(): Promise<void> {
   const service = new CounterService(db);
 
   console.log('Ensuring counters table exists...');
-  await service.ensureCounterTableExists();
+  await service.migrateIfNeeded();
 
   console.log('Creating server instance...');
   const app = express();

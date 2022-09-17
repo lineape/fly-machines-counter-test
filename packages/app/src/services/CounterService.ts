@@ -43,9 +43,8 @@ export class CounterService {
     });
   }
 
-  async ensureCounterTableExists(): Promise<void> {
-    const hasTable = await this.db.schema.hasTable('counters');
-    if (hasTable) return;
+  async migrateIfNeeded(): Promise<void> {
+    if (await this.db.schema.hasTable('counters')) return;
 
     await this.db.schema.createTable('counters', (table) => {
       table.increments('id').primary();
